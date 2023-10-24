@@ -4,13 +4,16 @@ from starlette_graphene3 import GraphQLApp, make_graphiql_handler
 
 from fastapi import FastAPI
 from schema import schema
-from starlette.responses import PlainTextResponse
+from starlette.responses import PlainTextResponse, JSONResponse
 
-def homepage(request):
-    return PlainTextResponse('Hello, world!')
+# def index(request):
+#     return PlainTextResponse('Hello, world!')
+
+async def index(request):
+    return JSONResponse({"message": "Hello, world"})
 
 routes = [
-    Route('/', homepage),
+    Route('/', index),
 ]
 
 app = Starlette(routes=routes)

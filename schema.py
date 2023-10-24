@@ -1,4 +1,4 @@
-from graphene import ObjectType, String, Int, Field, Schema, List
+from graphene import ObjectType, String, Int, Field, Schema, List, Mutation
 
 """
     class PersonType:
@@ -38,7 +38,24 @@ class Query(ObjectType):
     def resolve_person(root, info, key):
         return data[key]
     
-schema=Schema(query=Query)
+class CreatePerson(Mutation):
+    class Arguments:
+        email = String()
+        first_name = String()
+        last_name = String()
+        age = Int()
+
+    person = Field(lambda: PersonType)
+    
+    def mutate(self, info, email, first_name, last_name, age):
+        person = PersonType(email=email, first_name=first_name, last_name=last_name, age=age)
+        data[len(data)+1] = person
+        return CreatePerson(person=person)
+    
+class Mutation(ObjectType):
+    create_person = CreatePerson.Field()
+    
+schema=Schema(query=Query, mutation=Mutation)
 
 # query_string="{allPeople{email lastName}}"
 

@@ -1,31 +1,19 @@
-import asyncio
-
-import graphene
-# from graphene_file_upload.scalars import Upload
-
 from starlette.applications import Starlette
+from starlette.routing import Route
 from starlette_graphene3 import GraphQLApp, make_graphiql_handler
 
 from fastapi import FastAPI
 from schema import schema
+from starlette.responses import PlainTextResponse
 
-app=FastAPI()
+def homepage(request):
+    return PlainTextResponse('Hello, world!')
 
-# app.add_route('/graphql', GraphQLApp(schema=schema))
+routes = [
+    Route('/', homepage),
+]
 
-# @app.get("/")
-# async def index():
-#     return {"message": "Hello World"}
+app = Starlette(routes=routes)
 
-app = Starlette()
-# schema = graphene.Schema(query=Query, mutation=Mutation, subscription=Subscription)
-
-app.mount("/", GraphQLApp(schema=schema, on_get=make_graphiql_handler()))  # Graphiql IDE
-
-# @app.get("/")
-# async def index():
-#     return {"message": "Hello World"}
-
-# app.mount("/", GraphQLApp(schema, on_get=make_playground_handler()))  # Playground IDE
-# app.mount("/", GraphQLApp(schema)) # no IDE
+app.mount("/graphql", GraphQLApp(schema=schema, on_get=make_graphiql_handler()))  # Graphiql IDE
 

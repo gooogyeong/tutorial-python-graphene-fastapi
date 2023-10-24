@@ -6,11 +6,12 @@ authors = ["Min"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
-graphene = "^3.3"
-fastapi = "^0.104.0"
-uvicorn = "^0.23.2"
+python = ">=3.10,<3.12"
+graphene = "^3.0"
+fastapi = "^0.101.0"
+uvicorn = {extras = ["standard"], version = "^0.23.0"}
 starlette-graphene3 = "^0.6.0"
+sqlalchemy = {extras = ["asyncio"], version = "^2"}
 
 
 [build-system]

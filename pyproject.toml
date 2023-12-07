@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
 graphene = "^3.0"
+graphene-sqlalchemy = {git = "https://github.com/graphql-python/graphene-sqlalchemy.git", rev = "master"}
 fastapi = "^0.101.0"
 uvicorn = {extras = ["standard"], version = "^0.23.0"}
 starlette-graphene3 = "^0.6.0"

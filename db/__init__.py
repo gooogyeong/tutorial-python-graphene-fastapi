@@ -23,4 +23,13 @@ class PersonModel(Base):
     last_name = Column(String)
     age = Column(Integer)
 
+class Rectangle(Base):
+    __tablename__ = 'rectangle'
+    id = Column(Integer, primary_key=True)
+    width = Column(Integer)
+    height = Column(Integer)
+    x = Column(Integer)
+    y = Column(Integer)
+    color = Column(String)
+
 Base.metadata.create_all(engine)

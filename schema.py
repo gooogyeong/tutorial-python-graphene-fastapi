@@ -5,7 +5,6 @@ from graphene_sqlalchemy import SQLAlchemyObjectType
 class RectangleSchema(SQLAlchemyObjectType):
     class Meta:
         model = RectangleModel
-        interfaces = (relay.Node, )
 
 class Query(ObjectType):
     node = relay.Node.Field()

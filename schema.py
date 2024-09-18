@@ -1,43 +1,56 @@
-from graphene import ObjectType, String, Int, Field, Schema, Mutation, relay
-from db import PersonModel, session
-from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
+from graphene import ObjectType, String, Int, Field, Schema, Mutation, relay, List, InputObjectType, Float
+from db import RectangleModel, session
+from graphene_sqlalchemy import SQLAlchemyObjectType
 
-class PersonSchema(SQLAlchemyObjectType):
+class RectangleSchema(SQLAlchemyObjectType):
     class Meta:
-        model = PersonModel
+        model = RectangleModel
         interfaces = (relay.Node, )
 
 class Query(ObjectType):
     node = relay.Node.Field()
-    allPeople = SQLAlchemyConnectionField(PersonSchema.connection)
-    person=Field(PersonSchema, id=Int())
 
-    def resolve_all_people(root, info):
-        query = PersonModel.get_query(info)
+    rectangles=List(RectangleSchema)
+
+    rectangle=Field(RectangleSchema)
+
+    def resolve_rectangles(root, info, **args):
+        query = RectangleSchema.get_query(info)
+
         return query.all()
-    
-    def resolve_person(root, info, id):
-        person = session.query(PersonModel).get(id)
-        return person
-    
-class CreatePerson(Mutation):
-    class Arguments:
-        email = String()
-        first_name = String()
-        last_name = String()
-        age = Int()
 
-    person = Field(lambda: PersonSchema)
+class RectangleInput(InputObjectType):
+    width = Float()
+    height = Float()
+    x = Float()
+    y = Float()
+    color = String()
+
+class AddRectangle(Mutation):
+    class Arguments:
+        width = Float()
+        height = Float()
+        x = Float()
+        y = Float()
+        color = String()
+
+    id  = String()
+    width = Float()
+    height = Float()
+    x = Float()
+    y = Float()
+    color = String()
     
-    def mutate(self, info, email, first_name, last_name, age):
-        person = PersonModel(email=email, first_name=first_name, last_name=last_name, age=age)
-        session.add(person)
+    def mutate(self, info, x, y, width, height, color):
+        new_rectangle = RectangleModel(x=x, y=y, width=width, height=height, color=color)
+
+        session.add(new_rectangle)
         session.commit()
 
-        return CreatePerson(person=person)
+        return AddRectangle(id=new_rectangle.id, width=new_rectangle.width, height=new_rectangle.height, x=new_rectangle.x, y=new_rectangle.y, color=new_rectangle.color)
     
 class Mutation(ObjectType):
-    create_person = CreatePerson.Field()
+    add_rectangle = AddRectangle.Field()
     
 schema=Schema(query=Query, mutation=Mutation)
 
@@ -54,7 +67,23 @@ schema=Schema(query=Query, mutation=Mutation)
 #     }
 # """
 
-# result = schema.execute(query_string, context_value={'session': session})
+query_string="""
+    mutation {
+        addRectangle(x: 10, y: 10, width: 10.0, height: 10.0, color: "red") {
+            id
+            width
+            height
+            x
+            y
+            color
+        }
+    }
+# """
+
+result = schema.execute(query_string, context_value={'session': session})
 # print(result) # ExecutionResult(data={'allPeople': {'edges': [{'node': {'email': 'db@gmail.com', 'lastName': 'master'}}]}}, errors=None)
+print('=== print something ===')
+# print(result) # {'allPeople': {'edges': [{'node': {'email': 'db@gmail', 'lastName': 'master'}}]}}
+print(result) # ExecutionResult(data={'rectangles': {'edges': []}}, errors=None)
 
 # FastAPI: exposes what we get from console to frontend

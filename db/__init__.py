@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 from sqlalchemy.orm import relationship, sessionmaker, scoped_session
@@ -23,13 +23,13 @@ class PersonModel(Base):
     last_name = Column(String)
     age = Column(Integer)
 
-class Rectangle(Base):
+class RectangleModel(Base):
     __tablename__ = 'rectangle'
     id = Column(Integer, primary_key=True)
-    width = Column(Integer)
-    height = Column(Integer)
-    x = Column(Integer)
-    y = Column(Integer)
+    width = Column(Float)
+    height = Column(Float)
+    x = Column(Float)
+    y = Column(Float)
     color = Column(String)
 
 Base.metadata.create_all(engine)

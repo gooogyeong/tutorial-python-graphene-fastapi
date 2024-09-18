@@ -48,8 +48,28 @@ class AddRectangle(Mutation):
 
         return AddRectangle(id=new_rectangle.id, width=new_rectangle.width, height=new_rectangle.height, x=new_rectangle.x, y=new_rectangle.y, color=new_rectangle.color)
     
+class DeleteRectangles(Mutation):
+    class Arguments:
+        ids = List(ID)
+
+    Output = List(ID)
+
+    def mutate(self, info, ids):
+        rectangles_to_delete = session.query(RectangleModel).filter(RectangleModel.id.in_(ids)).all()
+
+        if not rectangles_to_delete:
+            raise Exception("No rectangles found for the given IDs.")
+        
+        for rectangle in rectangles_to_delete:
+            session.delete(rectangle)
+        session.commit()
+
+        return ids
+
+    
 class Mutation(ObjectType):
     add_rectangle = AddRectangle.Field()
+    delete_rectangles = DeleteRectangles.Field()
     
 schema=Schema(query=Query, mutation=Mutation)
 
@@ -66,18 +86,26 @@ schema=Schema(query=Query, mutation=Mutation)
 #     }
 # """
 
+# query_string="""
+#     mutation {
+#         addRectangle(x: 10, y: 10, width: 10.0, height: 10.0, color: "red") {
+#             id
+#             width
+#             height
+#             x
+#             y
+#             color
+#         }
+#     }
+# # """
+
 query_string="""
     mutation {
-        addRectangle(x: 10, y: 10, width: 10.0, height: 10.0, color: "red") {
-            id
-            width
-            height
-            x
-            y
-            color
-        }
+        deleteRectangles(ids: ["21"])
     }
 # """
+
+
 
 result = schema.execute(query_string, context_value={'session': session})
 # print(result) # ExecutionResult(data={'allPeople': {'edges': [{'node': {'email': 'db@gmail.com', 'lastName': 'master'}}]}}, errors=None)

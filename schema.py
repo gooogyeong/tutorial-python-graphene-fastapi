@@ -1,4 +1,4 @@
-from graphene import ObjectType, String, Int, Field, Schema, Mutation, relay, List, InputObjectType, Float
+from graphene import ObjectType, String, Field, Schema, Mutation, relay, List, InputObjectType, Float, ID
 from db import RectangleModel, session
 from graphene_sqlalchemy import SQLAlchemyObjectType
 
@@ -33,7 +33,7 @@ class AddRectangle(Mutation):
         y = Float()
         color = String()
 
-    id  = String()
+    id  = ID()
     width = Float()
     height = Float()
     x = Float()

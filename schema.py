@@ -55,6 +55,8 @@ class DeleteRectangles(Mutation):
     Output = List(ID)
 
     def mutate(self, info, ids):
+        session = info.context['session']
+
         rectangles_to_delete = session.query(RectangleModel).filter(RectangleModel.id.in_(ids)).all()
 
         if not rectangles_to_delete:
@@ -75,15 +77,14 @@ schema=Schema(query=Query, mutation=Mutation)
 
 # query_string="""
 #     {
-#         allPeople {
-#             edges {
-#                 node {
-#                     email 
-#                     lastName   
-#                 }
-#             }
-#         }
+#         rectangles {
+#             id
+#             x
+#             y
+#             width
+#             height
 #     }
+# }
 # """
 
 # query_string="""
@@ -99,18 +100,16 @@ schema=Schema(query=Query, mutation=Mutation)
 #     }
 # # """
 
-query_string="""
-    mutation {
-        deleteRectangles(ids: ["21"])
-    }
-# """
+# query_string="""
+#     mutation {
+#         deleteRectangles(ids: ["21"])
+#     }
+# # """
 
-
-
-result = schema.execute(query_string, context_value={'session': session})
+# result = schema.execute(query_string, context_value={'session': session})
 # print(result) # ExecutionResult(data={'allPeople': {'edges': [{'node': {'email': 'db@gmail.com', 'lastName': 'master'}}]}}, errors=None)
-print('=== print something ===')
+# print('=== print something ===')
 # print(result) # {'allPeople': {'edges': [{'node': {'email': 'db@gmail', 'lastName': 'master'}}]}}
-print(result) # ExecutionResult(data={'rectangles': {'edges': []}}, errors=None)
+# print(result) # ExecutionResult(data={'rectangles': {'edges': []}}, errors=None)
 
 # FastAPI: exposes what we get from console to frontend

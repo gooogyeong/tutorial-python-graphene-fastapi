@@ -14,9 +14,9 @@ class Query(ObjectType):
     rectangle=Field(RectangleSchema)
 
     def resolve_rectangles(root, info, **args):
-        query = RectangleSchema.get_query(info)
+        session = info.context['session']
 
-        return query.all()
+        return session.query(RectangleModel).all()
 
 class RectangleInput(InputObjectType):
     width = Float()
@@ -41,6 +41,8 @@ class AddRectangle(Mutation):
     color = String()
     
     def mutate(self, info, x, y, width, height, color):
+        session = info.context['session']
+
         new_rectangle = RectangleModel(x=x, y=y, width=width, height=height, color=color)
 
         session.add(new_rectangle)

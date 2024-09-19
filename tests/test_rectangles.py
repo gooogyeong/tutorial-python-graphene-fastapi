@@ -1,38 +1,38 @@
 from db import RectangleModel
 
-# def test_rectangles_query(client, session):
-#     client, context = client
+def test_rectangles_query(client, session):
+    client, context = client
 
-#     existing_rectangles_count = session.query(RectangleModel).all()
+    operation="""
+    {
+        rectangles {
+            id
+            x
+            y
+            width
+            height
+        }
+    }
+    """
 
-#     rectangle1 = RectangleModel(id=1, x=10, y=10, width=10, height=10, color="red")
-#     rectangle2 = RectangleModel(id=2, x=20, y=20, width=20, height=20, color="blue")
+    result_before = client.execute(operation, context_value=context)
 
-#     session.add_all([rectangle1, rectangle2])
-#     session.commit()
+    assert len(result_before['data']['rectangles']) == 0
 
-#     operation="""
-#     {
-#         rectangles {
-#                 id
-#                 x
-#                 y
-#                 width
-#                 height
-#         }
-#     }
-#     """
+    rectangle1 = RectangleModel(id=1, x=10, y=10, width=10, height=10, color="red")
+    rectangle2 = RectangleModel(id=2, x=10, y=10, width=10, height=10, color="red")
+    
+    session.add_all([rectangle1, rectangle2])
+    session.commit()
 
-#     result = client.execute(operation, context_value=context)
+    result_after = client.execute(operation, context_value=context)
 
-#     # remaining_rectangles = session.query(RectangleModel).all()
-#     expected_result = {}
-#     assert len(result['data']['rectangles']) == 2
+    assert len(result_after['data']['rectangles']) == 2
 
 def test_delete_rectangles(client, session):
     client, context = client
 
-    existing_rectangles_count = session.query(RectangleModel).all()
+    existing_rectangles = session.query(RectangleModel).all()
 
     rectangle1 = RectangleModel(id=100, x=10, y=10, width=10, height=10, color="red")
     rectangle2 = RectangleModel(id=101, x=10, y=10, width=10, height=10, color="red")
@@ -52,4 +52,4 @@ def test_delete_rectangles(client, session):
 
     assert result['data']['deleteRectangles'] == ['100', '101']
 
-    assert len(remaining_rectangles) == len(existing_rectangles_count)
+    assert len(remaining_rectangles) == len(existing_rectangles)

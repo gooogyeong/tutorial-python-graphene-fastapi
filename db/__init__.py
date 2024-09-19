@@ -11,17 +11,12 @@ BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 connection_str = "sqlite:///" + os.path.join(BASE_DIR, "tutorial-python-graphene-fastapi.db")
 
-engine = create_engine(connection_str, echo=True)  # create db in project folder
-session = scoped_session(sessionmaker(bind=engine))
-Base.query = session.query_property()
+engine = create_engine(connection_str)  # create db in project folder
 
-class PersonModel(Base):
-    __tablename__ = 'person'
-    id = Column(Integer, primary_key=True)
-    email = Column(String)
-    first_name = Column(String)
-    last_name = Column(String)
-    age = Column(Integer)
+SessionLocal = sessionmaker(bind=engine) # scoped_session(sessionmaker(bind=engine))
+session = scoped_session(SessionLocal)
+
+Base.query = session.query_property()
 
 class RectangleModel(Base):
     __tablename__ = 'rectangle'
